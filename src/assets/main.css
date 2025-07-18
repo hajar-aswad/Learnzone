@@ -25,7 +25,6 @@ body {
   color: #f1f5f9;
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -43,7 +42,6 @@ body {
   background: #94a3b8;
 }
 
-/* Animation utilities */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;

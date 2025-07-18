@@ -1,6 +1,5 @@
 <template>
   <div class="dashboard-container">
-    <!-- Sidebar -->
     <aside class="sidebar" :class="{ 'sidebar-collapsed': isSidebarCollapsed }">
       <div class="sidebar-header">
         <h2 class="logo">Admin Panel</h2>
@@ -89,14 +88,11 @@ import {
   Fold
 } from '@element-plus/icons-vue'
 
-// Reactive state
 const isSidebarCollapsed = ref(false)
 
-// Store and router
 const authStore = useAuthStore()
 const router = useRouter()
 
-// Menu items
 const menuItems = [
   {
     name: 'Teacher Requests',
@@ -120,7 +116,6 @@ const menuItems = [
   }
 ]
 
-// Computed properties
 const currentPageTitle = computed(() => {
   const currentRoute = router.currentRoute.value
   const menuItem = menuItems.find(item => item.path === currentRoute.path)
@@ -140,11 +135,9 @@ const userInitials = computed(() => {
 })
 
 const userAvatar = computed(() => {
-  // You can add avatar logic here
   return ''
 })
 
-// Methods
 const toggleSidebar = () => {
   isSidebarCollapsed.value = !isSidebarCollapsed.value
 }
@@ -164,7 +157,6 @@ const handleLogout = async () => {
     await authStore.logout()
     router.push('/login')
   } catch {
-    // User cancelled logout
   }
 }
 </script>
@@ -176,10 +168,9 @@ const handleLogout = async () => {
   background-color: #f5f7fa;
 }
 
-/* Sidebar Styles */
 .sidebar {
   width: 280px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #5767b3 0%, #8667a5 100%);
   color: white;
   display: flex;
   flex-direction: column;

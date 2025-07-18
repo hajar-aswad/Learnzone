@@ -7,7 +7,6 @@ import { RouterView } from 'vue-router'
 </script>
 
 <style>
-/* Global styles */
 * {
   margin: 0;
   padding: 0;
@@ -24,7 +23,6 @@ body {
   min-height: 100vh;
 }
 
-/* Element Plus theme customization */
 :root {
   --el-color-primary: #667eea;
   --el-color-success: #67c23a;
@@ -33,7 +31,6 @@ body {
   --el-color-info: #909399;
 }
 
-/* Dark mode support */
 @media (prefers-color-scheme: dark) {
   body {
     background-color: #1a1a1a;

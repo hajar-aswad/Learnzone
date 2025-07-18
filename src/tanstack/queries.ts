@@ -68,14 +68,13 @@ export const useTeacherRequestQueries = () => {
         return response
       },
       enabled: !!id,
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      gcTime: 10 * 60 * 1000, // 10 minutes
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000, 
       refetchOnWindowFocus: false,
       retry: 1
     })
   }
 
-  // Approve teacher request mutation
   const useApproveTeacherRequest = () => {
     return useMutation({
       mutationFn: async (id: number) => {
@@ -83,10 +82,8 @@ export const useTeacherRequestQueries = () => {
         return response
       },
       onSuccess: (data, id) => {
-        // Invalidate and refetch teacher requests
         queryClient.invalidateQueries({ queryKey: queryKeys.teacherRequests })
         
-        // Remove the specific request from cache
         queryClient.removeQueries({ queryKey: queryKeys.teacherRequest(id) })
         
         ElMessage.success('Teacher request approved successfully!')
@@ -98,7 +95,6 @@ export const useTeacherRequestQueries = () => {
     })
   }
 
-  // Reject teacher request mutation
   const useRejectTeacherRequest = () => {
     return useMutation({
       mutationFn: async (id: number) => {
@@ -106,10 +102,8 @@ export const useTeacherRequestQueries = () => {
         return response
       },
       onSuccess: (data, id) => {
-        // Invalidate and refetch teacher requests
         queryClient.invalidateQueries({ queryKey: queryKeys.teacherRequests })
         
-        // Remove the specific request from cache
         queryClient.removeQueries({ queryKey: queryKeys.teacherRequest(id) })
         
         ElMessage.success('Teacher request rejected successfully!')
@@ -121,7 +115,6 @@ export const useTeacherRequestQueries = () => {
     })
   }
 
-  // Get file/certificate
   const useGetFile = (filename: string) => {
     return useQuery({
       queryKey: ['file', filename],
@@ -146,14 +139,11 @@ export const useTeacherRequestQueries = () => {
   }
 }
 
-// Dashboard Queries (for future use)
 export const useDashboardQueries = () => {
-  // Dashboard stats query
   const useStatsQuery = () => {
     return useQuery({
       queryKey: queryKeys.dashboard.stats,
       queryFn: async () => {
-        // Replace with actual API call when available
         return {
           totalTeachers: 0,
           totalStudents: 0,
@@ -172,7 +162,6 @@ export const useDashboardQueries = () => {
   }
 }
 
-// Generic API query hook
 export const useApiQuery = <T>( 
   queryKey: string[],
   queryFn: () => Promise<T>,
@@ -195,7 +184,6 @@ export const useApiQuery = <T>(
   })
 }
 
-// Generic API mutation hook
 export const useApiMutation = <T, V>(
   mutationFn: (variables: V) => Promise<T>,
   options?: {

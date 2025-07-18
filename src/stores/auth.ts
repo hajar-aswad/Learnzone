@@ -37,10 +37,8 @@ export const useAuthStore = defineStore('auth', {
       try {
         const response = await authApi.login(credentials)
         
-        // Save token
         JwtService.saveToken(response.accessToken)
 
-        // Update state
         this.user = response
         this.isAuthenticated = true
         this.loading = false
@@ -58,7 +56,6 @@ export const useAuthStore = defineStore('auth', {
       this.loading = true
 
       try {
-        // Clear tokens and state
         JwtService.destroyTokens()
         this.user = null
         this.isAuthenticated = false
@@ -66,7 +63,6 @@ export const useAuthStore = defineStore('auth', {
         this.error = null
       } catch (error) {
         console.error('Logout error:', error)
-        // Still clear state even if there's an error
         JwtService.destroyTokens()
         this.user = null
         this.isAuthenticated = false
@@ -82,11 +78,8 @@ export const useAuthStore = defineStore('auth', {
         return false
       }
 
-      // If token exists and is valid, set authenticated
       this.isAuthenticated = true
       
-      // You can implement user fetching here if needed
-      // For now, we'll rely on the token being valid
       return true
     },
 
@@ -98,8 +91,6 @@ export const useAuthStore = defineStore('auth', {
       }
 
       try {
-        // You can implement token refresh logic here
-        // For now, we'll just check if the current token is still valid
         if (JwtService.isAuthenticated()) {
           this.isAuthenticated = true
           return true
@@ -114,17 +105,14 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    // Set user data (for use with TanStack Query)
     setUser(user: User) {
       this.user = user
     },
 
-    // Set authentication status (for use with TanStack Query)
     setAuthenticated(status: boolean) {
       this.isAuthenticated = status
     },
 
-    // Set error (for use with TanStack Query)
     setError(error: string | null) {
       this.error = error
     },

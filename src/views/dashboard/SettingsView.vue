@@ -16,7 +16,6 @@
 </template>
 
 <script setup lang="ts">
-// Settings management will be implemented here
 </script>
 
 <style scoped>

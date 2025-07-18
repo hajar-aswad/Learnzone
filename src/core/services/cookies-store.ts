@@ -1,13 +1,11 @@
 import Cookies from 'js-cookie'
 
-// Strict cookie rules for security
 export const STRICT_RULES = {
   sameSite: 'strict' as const,
   secure: true,
-  expires: 7 // 7 days default
+  expires: 7 // 7 days 
 } as const
 
-// Cookie configuration interface
 export interface CookieConfig {
   expires?: number
   path?: string
@@ -16,13 +14,11 @@ export interface CookieConfig {
   sameSite?: 'strict' | 'lax' | 'none'
 }
 
-// Type-safe cookie item interface
 export interface CookieItem<T = any> {
   value: T
   config?: CookieConfig
 }
 
-// Create a type-safe cookie item
 export function createCookiesItem<T>(
   value: T,
   config?: CookieConfig
@@ -36,9 +32,7 @@ export function createCookiesItem<T>(
   }
 }
 
-// Generic cookie operations
 export class CookieStore {
-  // Set a cookie with type safety
   static set<T>(key: string, value: T, config?: CookieConfig): void {
     const cookieConfig = {
       ...STRICT_RULES,
@@ -48,7 +42,6 @@ export class CookieStore {
     Cookies.set(key, JSON.stringify(value), cookieConfig)
   }
 
-  // Get a cookie with type safety
   static get<T>(key: string): T | null {
     const value = Cookies.get(key)
     if (!value) return null
@@ -60,7 +53,6 @@ export class CookieStore {
     }
   }
 
-  // Remove a cookie
   static remove(key: string, config?: CookieConfig): void {
     const cookieConfig = {
       ...STRICT_RULES,
@@ -70,31 +62,26 @@ export class CookieStore {
     Cookies.remove(key, cookieConfig)
   }
 
-  // Check if a cookie exists
   static exists(key: string): boolean {
     return Cookies.get(key) !== undefined
   }
 
-  // Get all cookies
   static getAll(): Record<string, any> {
     return Cookies.get()
   }
 
-  // Clear all cookies
   static clearAll(): void {
     Object.keys(Cookies.get()).forEach(key => {
       Cookies.remove(key)
     })
   }
 
-  // Set multiple cookies
   static setMultiple(cookies: Record<string, CookieItem>): void {
     Object.entries(cookies).forEach(([key, item]) => {
       this.set(key, item.value, item.config)
     })
   }
 
-  // Get multiple cookies
   static getMultiple<T extends Record<string, any>>(keys: (keyof T)[]): Partial<T> {
     const result: Partial<T> = {}
     
@@ -109,5 +96,4 @@ export class CookieStore {
   }
 }
 
-// Export default instance
 export default CookieStore 

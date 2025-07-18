@@ -16,7 +16,6 @@
 </template>
 
 <script setup lang="ts">
-// Students management will be implemented here
 </script>
 
 <style scoped>

@@ -210,11 +210,9 @@ import { ElMessage } from 'element-plus'
 import { Refresh, Document } from '@element-plus/icons-vue'
 import type { TeacherRequest, TeacherRequestDetail } from '@/tanstack/types'
 
-// Reactive state
 const showDetailsModal = ref(false)
 const selectedRequest = ref<TeacherRequest | null>(null)
 
-// Queries and mutations
 const {
   useTeacherRequests,
   useTeacherRequest,
@@ -222,13 +220,12 @@ const {
   useRejectTeacherRequest
 } = useTeacherRequestQueries()
 
-// Query hooks
+//  hookss
 const teacherRequestsQuery = useTeacherRequests()
 const teacherRequestDetailQuery = useTeacherRequest(selectedRequest.value?.id || 0)
 const approveMutation = useApproveTeacherRequest()
 const rejectMutation = useRejectTeacherRequest()
 
-// Computed properties
 const requests = computed(() => teacherRequestsQuery.data.value)
 const isLoading = computed(() => teacherRequestsQuery.isLoading.value)
 const error = computed(() => teacherRequestsQuery.error.value)
@@ -241,7 +238,6 @@ const requestDetails = computed(() => {
 const isApproving = computed(() => approveMutation.isPending.value)
 const isRejecting = computed(() => rejectMutation.isPending.value)
 
-// Methods
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', {
     year: 'numeric',
@@ -260,7 +256,6 @@ const openRequestDetails = async (request: TeacherRequest) => {
   selectedRequest.value = request
   showDetailsModal.value = true
   
-  // Fetch request details
   try {
     await teacherRequestsQuery.refetch()
   } catch (error) {
@@ -276,7 +271,6 @@ const approveRequest = async () => {
     showDetailsModal.value = false
     selectedRequest.value = null
   } catch (error) {
-    // Error is handled by the mutation
   }
 }
 
@@ -288,7 +282,6 @@ const rejectRequest = async () => {
     showDetailsModal.value = false
     selectedRequest.value = null
   } catch (error) {
-    // Error is handled by the mutation
   }
 }
 

@@ -2,7 +2,6 @@ import { apiClient, handleApiError } from './config'
 import type { LoginCredentials, AuthResponse } from '@/tanstack/types'
 
 export const authApi = {
-  // Login user
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
       const response = await apiClient.post<AuthResponse>('/authentication/login', credentials)
@@ -13,7 +12,6 @@ export const authApi = {
     }
   },
 
-  // Get teacher requests
   async getTeacherRequests() {
     try {
       const response = await apiClient.get('/authentication/teacherRequest')
@@ -23,7 +21,6 @@ export const authApi = {
     }
   },
 
-  // Get teacher request by ID
   async getTeacherRequestById(id: number) {
     try {
       const response = await apiClient.get(`/teacher/teacherrequestbyid/${id}`)
@@ -33,7 +30,6 @@ export const authApi = {
     }
   },
 
-  // Approve teacher request
   async approveTeacherRequest(id: number) {
     try {
       const response = await apiClient.patch(`/authentication/approveTeacher/${id}`)
@@ -43,7 +39,6 @@ export const authApi = {
     }
   },
 
-  // Reject teacher request
   async rejectTeacherRequest(id: number) {
     try {
       const response = await apiClient.patch(`/authentication/rejectTeacher/${id}`)
@@ -53,7 +48,6 @@ export const authApi = {
     }
   },
 
-  // Get file/certificate
   async getFile(filename: string) {
     try {
       const response = await apiClient.get(`/uploads/teacher/${filename}`, {

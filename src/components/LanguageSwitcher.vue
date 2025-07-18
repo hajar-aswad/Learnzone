@@ -46,7 +46,6 @@
   
   const { locale } = useI18n()
   
-  // Available languages
   const languages = [
     {
       code: 'en',
@@ -60,19 +59,16 @@
     }
   ]
   
-  // Current language
   const currentLocale = computed(() => locale.value)
   const currentLanguageLabel = computed(() => {
     const current = languages.find(lang => lang.code === currentLocale.value)
     return current?.name || 'English'
   })
   
-  // Handle language change
   const handleLanguageChange = (langCode: string) => {
     if (langCode !== currentLocale.value) {
       locale.value = langCode
       
-      // Update document direction for RTL languages
       if (langCode === 'ar') {
         document.documentElement.setAttribute('dir', 'rtl')
         document.documentElement.setAttribute('lang', 'ar')
@@ -81,12 +77,10 @@
         document.documentElement.setAttribute('lang', 'en')
       }
       
-      // Save language preference to localStorage
       localStorage.setItem('preferred-language', langCode)
     }
   }
   
-  // Initialize language on component mount
   onMounted(() => {
     const savedLanguage = localStorage.getItem('preferred-language')
     if (savedLanguage && languages.find(lang => lang.code === savedLanguage)) {
@@ -97,12 +91,12 @@
   
   <style scoped>
   .language-switcher-button {
-    color: #6b7280;
+    color: #a7acb4;
     transition: all 0.2s ease;
   }
   
   .language-switcher-button:hover {
-    color: #3b82f6;
+    color: #65558F;
   }
   
   .dark .language-switcher-button {
@@ -110,16 +104,16 @@
   }
   
   .dark .language-switcher-button:hover {
-    color: #60a5fa;
+    color: #65558F;
   }
   
   .el-dropdown-item.is-active {
-    color: #3b82f6;
+    color: #65558F;
     background-color: #eff6ff;
   }
   
   .dark .el-dropdown-item.is-active {
-    color: #60a5fa;
+    color: #65558F  ;
     background-color: #1e3a8a;
   }
   </style>

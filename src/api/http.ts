@@ -1,20 +1,17 @@
 import { apiClient, handleApiError } from './config'
 import type { AxiosRequestConfig, AxiosResponse } from 'axios'
 
-// Generic API response type
 export type ApiResponse<T> = {
   data: T
   status: number
   message?: string
 }
 
-// Error handler (logs and rethrows)
 function errorHandler(error: any) {
   handleApiError(error)
   throw error
 }
 
-// Wrapper functions
 async function get<T>(url: string, config?: AxiosRequestConfig): Promise<T | undefined> {
   try {
     const response: AxiosResponse<T> = await apiClient.get(url, config)
