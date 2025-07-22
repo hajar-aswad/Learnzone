@@ -14,7 +14,7 @@ export const authApi = {
 
   async getTeacherRequests() {
     try {
-      const response = await apiClient.get('/authentication/teacherRequest')
+      const response = await apiClient.get('/authentication/pendingTeacherRequests')
       return response.data
     } catch (error) {
       handleApiError(error, 'Failed to fetch teacher requests')
@@ -23,7 +23,7 @@ export const authApi = {
 
   async getTeacherRequestById(id: number) {
     try {
-      const response = await apiClient.get(`/teacher/teacherrequestbyid/${id}`)
+      const response = await apiClient.get(`/authentication/teacher/${id}`)
       return response.data
     } catch (error) {
       handleApiError(error, 'Failed to fetch teacher request details')
@@ -41,7 +41,7 @@ export const authApi = {
 
   async rejectTeacherRequest(id: number) {
     try {
-      const response = await apiClient.patch(`/authentication/rejectTeacher/${id}`)
+      const response = await apiClient.delete(`/authentication/disapproveTeacher/${id}`)
       return response.data
     } catch (error) {
       handleApiError(error, 'Failed to reject teacher request')

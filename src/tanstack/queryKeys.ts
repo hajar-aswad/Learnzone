@@ -18,7 +18,12 @@ export const queryKeys = {
   // Users
   users: ['users'] as const,
   user: (id: number) => ['user', id] as const,
-  
+  //vedio requests
+  contentRequests: ['content-requests'] as const,
+contentTypes: ['content-types'] as const,
+contentType: (id: number) => ['content-type', id] as const,
+
+
   // Courses (for future use)
   courses: ['courses'] as const,
   course: (id: number) => ['course', id] as const,

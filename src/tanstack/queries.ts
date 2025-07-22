@@ -2,8 +2,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
 import { authApi } from '@/api/auth'
 import { useAuthStore } from '@/stores/auth'
 import { ElMessage } from 'element-plus'
-import type { LoginCredentials, TeacherRequest, TeacherRequestDetail } from './types'
+import type { ContentType, CourseVideoRequest, CreateTypeRequest, LoginCredentials, TeacherRequest, TeacherRequestDetail } from './types'
 import { queryKeys } from './queryKeys'
+import { courseApi } from '@/api/course'
+import { typesApi } from '@/api/types'
 
 // Auth Queries
 export const useAuthQueries = () => {
@@ -138,6 +140,111 @@ export const useTeacherRequestQueries = () => {
     useGetFile
   }
 }
+// Content Request Queries
+export const useContentRequestQueries = () => {
+  const queryClient = useQueryClient()
+
+  // Get all unapproved videos
+  const useUnapprovedVideos = () => {
+    return useQuery({
+      queryKey: queryKeys.contentRequests,
+      queryFn: async (): Promise<CourseVideoRequest[]> => {
+        const response = await courseApi.getUnapprovedVideos()
+        return response
+      },
+      staleTime: 2 * 60 * 1000, // 2 minutes
+      gcTime: 5 * 60 * 1000, // 5 minutes
+      refetchOnWindowFocus: false,
+      retry: 1
+    })
+  }
+
+  // Approve video mutation
+  const useApproveVideo = () => {
+    return useMutation({
+      mutationFn: async (id: number) => {
+        const response = await courseApi.approveVideo(id)
+        return response
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: queryKeys.contentRequests })
+        ElMessage.success('Video approved successfully!')
+      },
+      onError: (error: any) => {
+        const message = error.message || 'Failed to approve video'
+        ElMessage.error(message)
+      }
+    })
+  }
+
+  // Disapprove video mutation
+  const useDisapproveVideo = () => {
+    return useMutation({
+      mutationFn: async (id: number) => {
+        const response = await courseApi.disapproveVideo(id)
+        return response
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: queryKeys.contentRequests })
+        ElMessage.success('Video disapproved successfully!')
+      },
+      onError: (error: any) => {
+        const message = error.message || 'Failed to disapprove video'
+        ElMessage.error(message)
+      }
+    })
+  }
+
+  return {
+    useUnapprovedVideos,
+    useApproveVideo,
+    useDisapproveVideo
+  }
+}
+
+// Content Type Queries
+export const useContentTypeQueries = () => {
+  const queryClient = useQueryClient()
+
+  // Get all content types
+  const useContentTypes = () => {
+    return useQuery({
+      queryKey: queryKeys.contentTypes,
+      queryFn: async (): Promise<ContentType[]> => {
+        const response = await typesApi.getTypes()
+        return response
+      },
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
+      refetchOnWindowFocus: false,
+      retry: 1
+    })
+  }
+
+  // Create content type mutation
+  const useCreateContentType = () => {
+    return useMutation({
+      mutationFn: async (data: CreateTypeRequest) => {
+        const response = await typesApi.createType(data)
+        return response
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: queryKeys.contentTypes })
+        ElMessage.success('Content type created successfully!')
+      },
+      onError: (error: any) => {
+        const message = error.message || 'Failed to create content type'
+        ElMessage.error(message)
+      }
+    })
+  }
+
+  return {
+    useContentTypes,
+    useCreateContentType
+  }
+}
+
 
 export const useDashboardQueries = () => {
   const useStatsQuery = () => {

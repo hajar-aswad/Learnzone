@@ -58,10 +58,10 @@
         <div class="request-content">
           <div class="request-info">
             <div class="teacher-name">
-              {{ request.fName }} {{ request.lName }}
+              {{ request.name }}  {{ request.email }}
             </div>
             <div class="request-date">
-              Requested on {{ formatDate(request.createdAt) }}
+              Requested on {{ formatDate(request.teacherCreatedAt) }}
             </div>
           </div>
           <div class="request-actions">

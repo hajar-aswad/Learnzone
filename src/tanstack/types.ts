@@ -28,13 +28,6 @@ export interface AuthResponse {
   accessToken: string
 }
 
-// Teacher Request Types
-export interface TeacherRequest {
-  id: number
-  fName: string
-  lName: string
-  createdAt: string
-}
 
 export interface TeacherRequestDetail {
   fName: string
@@ -64,7 +57,6 @@ export interface Certificate {
   teacherId: number
 }
 
-// API Response Types
 export interface ApiResponse<T> {
   data?: T
   message?: string
@@ -76,7 +68,6 @@ export interface ApproveResponse {
   statusCode: number
 }
 
-// Dashboard Types
 export interface DashboardStats {
   totalTeachers: number
   totalStudents: number
@@ -84,7 +75,6 @@ export interface DashboardStats {
   pendingRequests: number
 }
 
-// Course Types (for future use)
 export interface Course {
   id: number
   title: string
@@ -95,7 +85,6 @@ export interface Course {
   createdAt: string
 }
 
-// Student Types (for future use)
 export interface Student {
   id: number
   fName: string
@@ -106,3 +95,90 @@ export interface Student {
   role: 'Student'
   createdAt: string
 } 
+
+
+export interface CourseVideo {
+  id: number
+  courseId: number
+  youtubeVideoId: string | null
+  title: string
+  description: string
+  thumbnail_url: string | null
+  path: string
+  approaved: boolean
+  privacyStatus: string | null
+  videoUrl: string
+  number: number
+  course?: any 
+}
+export interface CourseVideoRequest {
+  courseId: number
+  courseTitle: string
+  teacherName: string
+  videos: CourseVideo[]
+}
+
+
+// Content Types
+export interface ContentType {
+  id: number
+  name: string
+  createdAt: string
+}
+
+export interface CreateTypeRequest {
+  name: string
+}
+
+export interface CreateTypeResponse {
+  id: number
+  name: string
+  createdAt: string
+}
+
+
+export interface ApproveVideoResponse {
+  id: string // YouTube video ID
+  snippet: {
+    title: string
+    description: string
+    thumbnails: {
+      medium: {
+        url: string
+      }
+    }
+  }
+  status: {
+    privacyStatus: string
+  }
+  approvedBy: {
+    id: number
+    email: string
+    name: string
+    role: string
+  }
+  approvedAt: string
+  youtubeAccess: boolean
+}
+
+export interface DisapproveVideoResponse {
+  // fields from disapprove result
+  disapprovedBy: {
+    id: number
+    email: string
+    name: string
+    role: string
+  }
+  disapprovedAt: string
+  reasons?: string
+  emailSent: boolean
+  emailError: string | null
+}
+
+export interface TeacherRequest {
+  id: number
+  name: string // Changed from fName/lName to single name field
+  email: string
+  teacherCreatedAt: string // Changed from createdAt
+  phoneNumber: string
+}

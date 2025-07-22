@@ -5,6 +5,8 @@ import { JwtService } from '@/core/services/JwtService'
 const LoginPage = () => import('../views/auth/LoginPage.vue')
 const DashboardView = () => import('../views/DashboardView.vue')
 const TeacherRequestsView = () => import('../views/dashboard/TeacherRequestsView.vue')
+const ContentRequestsView = () => import('../views/dashboard/ContentRequestsView.vue')
+const ContentTypesView = () => import('../views/dashboard/ContentTypeView.vue')
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -43,6 +45,24 @@ const router = createRouter({
           name: 'settings',
           component: () => import('../views/dashboard/SettingsView.vue'),
           meta: { requiresAuth: true }
+        },
+        {
+          path: 'content-requests',
+          name: 'ContentRequests',
+          component: ContentRequestsView,
+          meta: {
+            title: 'Content Requests',
+            roles: ['Admin']
+          }
+        },
+        {
+          path: 'content-types',
+          name: 'ContentTypes',
+          component: ContentTypesView,
+          meta: {
+            title: 'Content Types',
+            roles: ['Admin']
+          }
         }
       ]
     },

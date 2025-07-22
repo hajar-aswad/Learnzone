@@ -113,7 +113,18 @@ const menuItems = [
     name: 'Settings',
     path: '/dashboard/settings',
     icon: 'Setting'
-  }
+  },
+  {
+  name: 'Content Requests', 
+  path: '/dashboard/content-requests',
+  icon: 'VideoPlay'
+},
+{
+  name: 'Content Types',
+  path: '/dashboard/content-types', 
+  icon: 'Collection'
+}
+
 ]
 
 const currentPageTitle = computed(() => {
