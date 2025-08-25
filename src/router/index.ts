@@ -2,19 +2,30 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { JwtService } from '@/core/services/JwtService'
 
+
+// Route component loaders (preferred style)
 const LoginPage = () => import('../views/auth/LoginPage.vue')
 const DashboardView = () => import('../views/DashboardView.vue')
+const HomeView = () => import('../views/dashboard/HomeView.vue')
 const TeacherRequestsView = () => import('../views/dashboard/TeacherRequestsView.vue')
+const TeachersView = () => import('../views/dashboard/TeachersView.vue')
+const StudentsView = () => import('../views/dashboard/StudentsView.vue')
+const SettingsView = () => import('../views/dashboard/SettingsView.vue')
 const ContentRequestsView = () => import('../views/dashboard/ContentRequestsView.vue')
 const ContentTypesView = () => import('../views/dashboard/ContentTypeView.vue')
+const TagsView = () => import('../views/dashboard/TagsView.vue')
+const AdminAuthSuccess = () => import('../components/AdminAuthSuccess.vue')
+const AdminAuthError = () => import('../components/AdminAuthError.vue')
+
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
-      redirect: '/dashboard/requests'
+      name: 'root',
+      redirect: '/dashboard/home'
     },
     {
       path: '/dashboard',
@@ -22,6 +33,12 @@ const router = createRouter({
       component: DashboardView,
       meta: { requiresAuth: true },
       children: [
+        {
+          path: 'home',
+          name: 'dashboard-home',
+          component: HomeView,
+          meta: { requiresAuth: true }
+        },
         {
           path: 'requests',
           name: 'teacher-requests',
@@ -31,19 +48,19 @@ const router = createRouter({
         {
           path: 'teachers',
           name: 'teachers',
-          component: () => import('../views/dashboard/TeachersView.vue'),
+          component: TeachersView,
           meta: { requiresAuth: true }
         },
         {
           path: 'students',
           name: 'students',
-          component: () => import('../views/dashboard/StudentsView.vue'),
+          component: StudentsView,
           meta: { requiresAuth: true }
         },
         {
           path: 'settings',
           name: 'settings',
-          component: () => import('../views/dashboard/SettingsView.vue'),
+          component: SettingsView,
           meta: { requiresAuth: true }
         },
         {
@@ -67,7 +84,7 @@ const router = createRouter({
         {
           path: 'tags',
           name: 'Tags',
-          component: () => import('../views/dashboard/TagsView.vue'),
+          component: TagsView,
           meta: {
             title: 'Tags Management',
             roles: ['Admin']
@@ -85,19 +102,19 @@ const router = createRouter({
     {
       path: '/admin/auth-success',
       name: 'AdminAuthSuccess',
-      component: () => import('../components/AdminAuthSuccess.vue'),
+      component: AdminAuthSuccess,
       meta: { requiresGuest: true }
     },
     {
       path: '/admin/auth-error',
       name: 'AdminAuthError',
-      component: () => import('../components/AdminAuthError.vue'),
+      component: AdminAuthError,
       meta: { requiresGuest: true }
     },
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
-      redirect: { name: 'teacher-requests' }
+      redirect: { name: 'dashboard-home' }
     }
   ]
 })

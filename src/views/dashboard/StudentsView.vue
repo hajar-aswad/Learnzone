@@ -250,7 +250,12 @@ const error = computed(() => studentsQuery.error.value)
 // Check if we have students data
 const hasStudents = computed(() => {
   if (!studentsData.value) return false
-  const singleTypeCount = Object.values(studentsData.value.studentsByType || {}).reduce((total: number, students: any[]) => total + students.length, 0)
+  const singleTypeCount = Object.values(studentsData.value.studentsByType || {}).reduce((total: number, students: unknown) => {
+    if (Array.isArray(students)) {
+      return total + students.length
+    }
+    return total
+  }, 0)
   const multipleTypeCount = studentsData.value.multipleTypeStudents?.length || 0
   return singleTypeCount > 0 || multipleTypeCount > 0
 })

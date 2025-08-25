@@ -108,7 +108,7 @@
             <!-- YouTube Embed -->
             <iframe
               v-if="isYouTubeVideo(selectedVideo)"
-              :src="getVideoEmbedUrl(selectedVideo)"
+              :src="getVideoEmbedUrl(selectedVideo) || undefined"
               frameborder="0"
               allowfullscreen
               class="video-player"
@@ -117,7 +117,7 @@
             <!-- Local Video File -->
             <video
               v-else-if="isLocalVideo(selectedVideo)"
-              :src="getVideoEmbedUrl(selectedVideo)"
+              :src="getVideoEmbedUrl(selectedVideo) || undefined"
               controls
               class="video-player"
               preload="metadata"

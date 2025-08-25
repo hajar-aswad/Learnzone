@@ -10,6 +10,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AdminAuthError: typeof import('./src/components/AdminAuthError.vue')['default']
     AdminAuthSuccess: typeof import('./src/components/AdminAuthSuccess.vue')['default']
+    ElAlert: typeof import('element-plus/es')['ElAlert']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCard: typeof import('element-plus/es')['ElCard']
@@ -35,6 +36,7 @@ declare module 'vue' {
     GoogleSigninButton: typeof import('./src/components/GoogleSigninButton.vue')['default']
     LanguageSwitcher: typeof import('./src/components/LanguageSwitcher.vue')['default']
     LoadingOverlay: typeof import('./src/components/LoadingOverlay.vue')['default']
+    MonthlyChartModal: typeof import('./src/components/MonthlyChartModal.vue')['default']
     PortRedirectHandler: typeof import('./src/components/PortRedirectHandler.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

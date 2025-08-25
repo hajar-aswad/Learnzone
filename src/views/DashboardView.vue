@@ -79,6 +79,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { ElMessageBox } from 'element-plus'
 import {
+  House,
   Document,
   User,
   School,
@@ -97,6 +98,11 @@ const authStore = useAuthStore()
 const router = useRouter()
 
 const menuItems = [
+  {
+    name: 'Home',
+    path: '/dashboard/home',
+    icon: 'House'
+  },
   {
     name: 'Teacher Requests',
     path: '/dashboard/requests',

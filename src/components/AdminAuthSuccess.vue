@@ -61,7 +61,7 @@ onMounted(() => {
              // Redirect to dashboard after a short delay
        setTimeout(() => {
          // Use window.location.href to ensure we stay on port 3001
-         window.location.href = 'http://localhost:3001/dashboard/requests'
+         window.location.href = 'http://localhost:3001/dashboard/home'
        }, 2000)
     } else {
              // Missing required parameters, redirect to login
