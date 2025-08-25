@@ -85,7 +85,10 @@ import {
   Setting,
   SwitchButton,
   Expand,
-  Fold
+  Fold,
+  VideoPlay,
+  Collection,
+  PriceTag
 } from '@element-plus/icons-vue'
 
 const isSidebarCollapsed = ref(false)
@@ -123,6 +126,11 @@ const menuItems = [
   name: 'Content Types',
   path: '/dashboard/content-types', 
   icon: 'Collection'
+},
+{
+  name: 'Tags',
+  path: '/dashboard/tags',
+  icon: 'PriceTag'
 }
 
 ]

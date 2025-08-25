@@ -29,7 +29,8 @@ export default {
       authenticationSuccessful: 'تمت المصادقة بنجاح! 🎉',
       authenticationFailed: 'فشلت المصادقة ❌',
       tryAgain: 'حاول مرة أخرى',
-      unknownError: 'حدث خطأ غير معروف'
+      unknownError: 'حدث خطأ غير معروف',
+      redirectingToDashboard: 'جاري إعادة التوجيه إلى لوحة التحكم...'
     },
     common: {
       submit: 'إرسال',

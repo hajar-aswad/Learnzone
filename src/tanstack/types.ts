@@ -136,6 +136,30 @@ export interface CreateTypeResponse {
   createdAt: string
 }
 
+// Tag Types
+export interface Tag {
+  id: number
+  name: string
+  typeId: number
+  createdAt: string
+}
+
+export interface CreateTagRequest {
+  name: string
+  typeId: number
+}
+
+export interface UpdateTagRequest {
+  name?: string
+  typeId?: number
+}
+
+export interface TagsResponse {
+  success: boolean
+  tagsByType: { [key: number]: Tag[] }
+  totalCount: number
+}
+
 
 export interface ApproveVideoResponse {
   id: string // YouTube video ID

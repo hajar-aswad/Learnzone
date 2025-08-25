@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
 import { authApi } from '@/api/auth'
+import * as tagsApi from '@/api/tags'
 import { useAuthStore } from '@/stores/auth'
 import { ElMessage } from 'element-plus'
 import type { ContentType, CourseVideoRequest, CreateTypeRequest, LoginCredentials, TeacherRequest, TeacherRequestDetail } from './types'
@@ -138,6 +139,89 @@ export const useTeacherRequestQueries = () => {
     useApproveTeacherRequest,
     useRejectTeacherRequest,
     useGetFile
+  }
+}
+
+// Approved Teachers Queries
+export const useApprovedTeachersQueries = () => {
+  // Get all approved teachers
+  const useApprovedTeachers = () => {
+    return useQuery({
+      queryKey: queryKeys.approvedTeachers,
+      queryFn: async () => {
+        const response = await authApi.getApprovedTeachers()
+        return response
+      },
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
+      refetchOnWindowFocus: false,
+      retry: 1
+    })
+  }
+
+  return {
+    useApprovedTeachers
+  }
+}
+
+// Students Queries
+export const useStudentsQueries = () => {
+  // Get all students
+  const useStudents = () => {
+    return useQuery({
+      queryKey: queryKeys.students,
+      queryFn: async () => {
+        const response = await authApi.getAllStudents()
+        return response
+      },
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
+      refetchOnWindowFocus: false,
+      retry: 1
+    })
+  }
+
+  return {
+    useStudents
+  }
+}
+
+// Tags Queries
+export const useTagsQueries = () => {
+  // Get all tags
+  const useTags = () => {
+    return useQuery({
+      queryKey: queryKeys.tags,
+      queryFn: async () => {
+        const response = await tagsApi.getAllTags()
+        return response
+      },
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
+      refetchOnWindowFocus: false,
+      retry: 1
+    })
+  }
+
+  // Get tag by ID
+  const useTag = (id: number) => {
+    return useQuery({
+      queryKey: queryKeys.tag(id),
+      queryFn: async () => {
+        const response = await tagsApi.getTagById(id)
+        return response
+      },
+      enabled: !!id,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
+      refetchOnWindowFocus: false,
+      retry: 1
+    })
+  }
+
+  return {
+    useTags,
+    useTag
   }
 }
 // Content Request Queries

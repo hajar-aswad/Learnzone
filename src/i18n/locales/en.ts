@@ -29,7 +29,8 @@ export default {
       authenticationSuccessful: 'Authentication Successful! 🎉',
       authenticationFailed: 'Authentication Failed ❌',
       tryAgain: 'Try Again',
-      unknownError: 'Unknown error occurred'
+      unknownError: 'Unknown error occurred',
+      redirectingToDashboard: 'Redirecting to dashboard...'
     },
     common: {
       submit: 'Submit',

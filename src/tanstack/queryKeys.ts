@@ -9,6 +9,11 @@ export const queryKeys = {
   teacherRequests: ['teacher-requests'] as const,
   teacherRequest: (id: number) => ['teacher-request', id] as const,
   
+  // Approved teachers
+  approvedTeachers: ['approved-teachers'] as const,
+  tags: ['tags'] as const,
+  tag: (id: number) => ['tag', id] as const,
+  
   // Dashboard
   dashboard: {
     stats: ['dashboard', 'stats'] as const,

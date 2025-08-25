@@ -105,16 +105,37 @@
         <div v-if="selectedVideo" class="video-modal-content">
           <!-- Video Player -->
           <div class="video-player-container">
+            <!-- YouTube Embed -->
             <iframe
-              v-if="selectedVideo.videoUrl"
-              :src="getEmbedUrl(selectedVideo.videoUrl)"
+              v-if="isYouTubeVideo(selectedVideo)"
+              :src="getVideoEmbedUrl(selectedVideo)"
               frameborder="0"
               allowfullscreen
               class="video-player"
             ></iframe>
+            
+            <!-- Local Video File -->
+            <video
+              v-else-if="isLocalVideo(selectedVideo)"
+              :src="getVideoEmbedUrl(selectedVideo)"
+              controls
+              class="video-player"
+              preload="metadata"
+              @error="handleVideoError"
+            >
+              Your browser does not support the video tag.
+            </video>
+            
+            <!-- No Video Available -->
             <div v-else class="video-placeholder">
               <el-icon class="placeholder-icon"><VideoPlay /></el-icon>
               <p>Video not available</p>
+              <div class="video-debug-info" v-if="selectedVideo">
+                <p><strong>Debug Info:</strong></p>
+                <p>videoUrl: {{ selectedVideo.videoUrl || 'null' }}</p>
+                <p>youtubeVideoId: {{ selectedVideo.youtubeVideoId || 'null' }}</p>
+                <p>path: {{ selectedVideo.path || 'null' }}</p>
+              </div>
             </div>
           </div>
   
@@ -210,6 +231,11 @@
   }
   
   const openVideoModal = (video: CourseVideo) => {
+    console.log('Opening video modal with video:', video)
+    console.log('Video URL fields:')
+    console.log('- videoUrl:', video.videoUrl)
+    console.log('- youtubeVideoId:', video.youtubeVideoId)
+    console.log('- path:', video.path)
     selectedVideo.value = video
     showVideoModal.value = true
   }
@@ -253,6 +279,75 @@
       return `https://www.youtube.com/embed/${videoId}`
     }
     return videoUrl
+  }
+
+  const getVideoEmbedUrl = (video: CourseVideo): string | null => {
+    // Try multiple sources to get a valid video URL
+    console.log('Video object for embed URL:', video)
+    
+    // First try: videoUrl field
+    if (video.videoUrl && video.videoUrl.trim()) {
+      console.log('Using videoUrl:', video.videoUrl)
+      return getEmbedUrl(video.videoUrl)
+    }
+    
+    // Second try: youtubeVideoId field
+    if (video.youtubeVideoId && video.youtubeVideoId.trim()) {
+      console.log('Using youtubeVideoId:', video.youtubeVideoId)
+      return `https://www.youtube.com/embed/${video.youtubeVideoId}`
+    }
+    
+    // Third try: path field (if it's a YouTube URL)
+    if (video.path && video.path.includes('youtube.com')) {
+      console.log('Using path:', video.path)
+      return getEmbedUrl(video.path)
+    }
+    
+    // Fourth try: if path looks like a YouTube video ID
+    if (video.path && video.path.length === 11 && /^[a-zA-Z0-9_-]{11}$/.test(video.path)) {
+      console.log('Using path as video ID:', video.path)
+      return `https://www.youtube.com/embed/${video.path}`
+    }
+    
+    // Fifth try: local video file (path field)
+    if (video.path && !video.path.includes('youtube.com') && !video.path.includes('http')) {
+      console.log('Using local video path:', video.path)
+      // Convert Windows path to URL format and serve from backend
+      const videoFileName = video.path.split('\\').pop() // Get filename from path
+      return `http://localhost:3000/uploads/videos/${videoFileName}`
+    }
+    
+    console.log('No valid video URL found')
+    return null
+  }
+
+  const isYouTubeVideo = (video: CourseVideo): boolean => {
+    if (!video) return false
+    
+    // Check if any field contains YouTube URL or video ID
+    return !!(
+      (video.videoUrl && video.videoUrl.includes('youtube.com')) ||
+      (video.youtubeVideoId && video.youtubeVideoId.trim()) ||
+      (video.path && video.path.includes('youtube.com')) ||
+      (video.path && video.path.length === 11 && /^[a-zA-Z0-9_-]{11}$/.test(video.path))
+    )
+  }
+
+  const isLocalVideo = (video: CourseVideo): boolean => {
+    if (!video) return false
+    
+    // Check if path contains a local file (not YouTube, not HTTP)
+    return !!(
+      video.path && 
+      !video.path.includes('youtube.com') && 
+      !video.path.includes('http') &&
+      (video.path.includes('\\') || video.path.includes('/'))
+    )
+  }
+
+  const handleVideoError = (event: Event) => {
+    console.error('Video failed to load:', event)
+    ElMessage.error('Failed to load video. Please check if the file exists on the server.')
   }
   </script>
   
@@ -429,6 +524,12 @@
     width: 100%;
     height: 100%;
   }
+
+  /* Ensure video element has proper styling */
+  .video-player-container video.video-player {
+    object-fit: contain;
+    background: #000;
+  }
   
   .video-placeholder {
     position: absolute;
@@ -446,6 +547,26 @@
   .placeholder-icon {
     font-size: 4rem;
     margin-bottom: 16px;
+  }
+
+  .video-debug-info {
+    margin-top: 20px;
+    padding: 16px;
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 8px;
+    text-align: left;
+    max-width: 400px;
+  }
+
+  .video-debug-info p {
+    margin: 4px 0;
+    font-size: 0.9rem;
+    font-family: monospace;
+  }
+
+  .video-debug-info strong {
+    color: #0369a1;
   }
   
   .video-details {

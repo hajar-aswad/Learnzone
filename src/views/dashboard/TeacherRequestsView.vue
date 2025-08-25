@@ -83,8 +83,30 @@
       title="Teacher Request Details"
       width="60%"
       :close-on-click-modal="false"
+      @close="closeModal"
     >
-      <div v-if="selectedRequest && requestDetails" class="request-details">
+      <!-- Loading State -->
+      <div v-if="teacherRequestDetailQuery.isLoading.value" class="loading-container">
+        <el-skeleton :rows="8" animated />
+      </div>
+      
+      <!-- Error State -->
+      <div v-else-if="teacherRequestDetailQuery.error.value" class="error-container">
+        <el-result
+          icon="error"
+          title="Failed to load teacher details"
+          :sub-title="teacherRequestDetailQuery.error.value?.message || 'Unknown error occurred'"
+        >
+          <template #extra>
+            <el-button type="primary" @click="openRequestDetails(selectedRequest!)">
+              Try Again
+            </el-button>
+          </template>
+        </el-result>
+      </div>
+      
+      <!-- Details Content -->
+      <div v-else-if="selectedRequest && requestDetails" class="request-details">
         <!-- Basic Information -->
         <el-card class="detail-section">
           <template #header>
@@ -138,12 +160,29 @@
             </el-descriptions-item>
             <el-descriptions-item label="Cover Letter">
               <div class="cover-letter">
-                {{ requestDetails.teacher.coverLetter }}
+                <el-button
+                  type="primary"
+                  size="small"
+                  @click="showFullCoverLetter = true"
+                  class="read-cover-letter-btn"
+                >
+                  Read Full Cover Letter
+                </el-button>
               </div>
             </el-descriptions-item>
             <el-descriptions-item label="CV">
               <div class="cv-content">
-                {{ requestDetails.teacher.cv }}
+                <div class="cv-info">
+                  <el-icon class="cv-icon"><Document /></el-icon>
+                  <span class="cv-name">{{ requestDetails.teacher.cv }}</span>
+                </div>
+                <el-button
+                  type="primary"
+                  size="small"
+                  @click="openCV(requestDetails.teacher.cv)"
+                >
+                  Open CV
+                </el-button>
               </div>
             </el-descriptions-item>
           </el-descriptions>
@@ -200,18 +239,46 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- Full Cover Letter Modal -->
+    <el-dialog
+      v-model="showFullCoverLetter"
+      title="Full Cover Letter"
+      width="60%"
+      :close-on-click-modal="false"
+    >
+      <div v-if="selectedRequest && requestDetails" class="full-cover-letter">
+        <div class="cover-letter-header">
+          <h3>Cover Letter from {{ requestDetails.fName }} {{ requestDetails.lName }}</h3>
+          <p class="cover-letter-meta">Email: {{ requestDetails.email }}</p>
+        </div>
+        <div class="cover-letter-content">
+          {{ requestDetails.teacher.coverLetter }}
+        </div>
+      </div>
+      
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="showFullCoverLetter = false">Close</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watchEffect } from 'vue'
+import { useQuery } from '@tanstack/vue-query'
 import { useTeacherRequestQueries } from '@/tanstack/queries'
 import { ElMessage } from 'element-plus'
 import { Refresh, Document } from '@element-plus/icons-vue'
 import type { TeacherRequest, TeacherRequestDetail } from '@/tanstack/types'
+import { authApi } from '@/api/auth'
 
 const showDetailsModal = ref(false)
 const selectedRequest = ref<TeacherRequest | null>(null)
+const selectedTeacherId = ref<number | null>(null)
+const showFullCoverLetter = ref(false)
 
 const {
   useTeacherRequests,
@@ -222,16 +289,43 @@ const {
 
 //  hookss
 const teacherRequestsQuery = useTeacherRequests()
-const teacherRequestDetailQuery = useTeacherRequest(selectedRequest.value?.id || 0)
 const approveMutation = useApproveTeacherRequest()
 const rejectMutation = useRejectTeacherRequest()
+
+// Create a reactive query that updates when selectedTeacherId changes
+const teacherRequestDetailQuery = useQuery({
+  queryKey: computed(() => ['teacherRequest', selectedTeacherId.value]),
+  queryFn: async () => {
+    console.log('queryFn called with selectedTeacherId:', selectedTeacherId.value)
+    if (!selectedTeacherId.value) {
+      console.log('No teacher ID, returning null')
+      return null
+    }
+    console.log('Fetching teacher details for ID:', selectedTeacherId.value)
+    const result = await authApi.getTeacherRequestById(selectedTeacherId.value)
+    console.log('API result:', result)
+    return result
+  },
+  enabled: computed(() => !!selectedTeacherId.value),
+  staleTime: 5 * 60 * 1000,
+  gcTime: 10 * 60 * 1000,
+  refetchOnWindowFocus: false,
+  retry: 1
+})
 
 const requests = computed(() => teacherRequestsQuery.data.value)
 const isLoading = computed(() => teacherRequestsQuery.isLoading.value)
 const error = computed(() => teacherRequestsQuery.error.value)
 
 const requestDetails = computed(() => {
-  if (!selectedRequest.value) return null
+  console.log('Computing requestDetails:')
+  console.log('- selectedRequest:', selectedRequest.value)
+  console.log('- selectedTeacherId:', selectedTeacherId.value)
+  console.log('- query data:', teacherRequestDetailQuery.data.value)
+  console.log('- query isLoading:', teacherRequestDetailQuery.isLoading.value)
+  console.log('- query error:', teacherRequestDetailQuery.error.value)
+  
+  if (!selectedRequest.value || !selectedTeacherId.value) return null
   return teacherRequestDetailQuery.data.value
 })
 
@@ -253,14 +347,43 @@ const refreshRequests = () => {
 }
 
 const openRequestDetails = async (request: TeacherRequest) => {
+  console.log('Opening request details for:', request)
+  console.log('Request ID type:', typeof request.id, 'Value:', request.id)
+  console.log('Full request object:', JSON.stringify(request, null, 2))
+  
+  // Check if there are other ID fields
+  console.log('All request fields:', Object.keys(request))
+  console.log('Request values:', Object.values(request))
+  
   selectedRequest.value = request
+  selectedTeacherId.value = request.id
+  
+  console.log('Set selectedTeacherId to:', selectedTeacherId.value)
+  console.log('Selected teacher ID type:', typeof selectedTeacherId.value)
+  
   showDetailsModal.value = true
   
   try {
-    await teacherRequestsQuery.refetch()
+    // Manually trigger the query with the new ID
+    console.log('Selected request ID:', selectedRequest.value?.id)
+    console.log('Selected teacher ID:', selectedTeacherId.value)
+    console.log('Query enabled:', !!selectedTeacherId.value)
+    
+    // Force refetch with new ID
+    if (selectedTeacherId.value) {
+      console.log('Forcing query refetch for ID:', selectedTeacherId.value)
+      // Force the query to refetch
+      teacherRequestDetailQuery.refetch()
+    }
   } catch (error) {
     ElMessage.error('Failed to load request details')
   }
+}
+
+const closeModal = () => {
+  selectedRequest.value = null
+  selectedTeacherId.value = null
+  showFullCoverLetter.value = false
 }
 
 const approveRequest = async () => {
@@ -270,6 +393,7 @@ const approveRequest = async () => {
     await approveMutation.mutateAsync(selectedRequest.value.id)
     showDetailsModal.value = false
     selectedRequest.value = null
+    selectedTeacherId.value = null
   } catch (error) {
   }
 }
@@ -281,6 +405,7 @@ const rejectRequest = async () => {
     await rejectMutation.mutateAsync(selectedRequest.value.id)
     showDetailsModal.value = false
     selectedRequest.value = null
+    selectedTeacherId.value = null
   } catch (error) {
   }
 }
@@ -289,6 +414,13 @@ const openCertificate = (filename: string) => {
   const url = `http://localhost:3000/uploads/teacher/${filename}`
   window.open(url, '_blank')
 }
+
+const openCV = (filename: string) => {
+  const url = `http://localhost:3000/uploads/teacher/${filename}`
+  window.open(url, '_blank')
+}
+
+// Cover letter helper functions - no longer needed since we only show the button
 </script>
 
 <style scoped>
@@ -370,6 +502,12 @@ const openCertificate = (filename: string) => {
 }
 
 /* Modal Styles */
+.loading-container,
+.error-container {
+  padding: 40px;
+  text-align: center;
+}
+
 .request-details {
   max-height: 70vh;
   overflow-y: auto;
@@ -397,14 +535,71 @@ const openCertificate = (filename: string) => {
   text-decoration: underline;
 }
 
-.cover-letter,
-.cv-content {
+.cover-letter {
   background: #f5f7fa;
   padding: 12px;
   border-radius: 4px;
-  white-space: pre-wrap;
-  max-height: 200px;
+  text-align: center;
+}
+
+.read-cover-letter-btn {
+  width: 100%;
+}
+
+.cv-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #f5f7fa;
+  border-radius: 4px;
+}
+
+.cv-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cv-icon {
+  color: #409eff;
+}
+
+.cv-name {
+  font-weight: 500;
+}
+
+/* Full Cover Letter Modal Styles */
+.full-cover-letter {
+  max-height: 70vh;
   overflow-y: auto;
+}
+
+.cover-letter-header {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e4e7ed;
+}
+
+.cover-letter-header h3 {
+  margin: 0 0 8px 0;
+  color: #303133;
+  font-size: 1.4rem;
+}
+
+.cover-letter-meta {
+  margin: 0;
+  color: #606266;
+  font-size: 0.9rem;
+}
+
+.cover-letter-content {
+  background: #f5f7fa;
+  padding: 20px;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  line-height: 1.6;
+  font-size: 1rem;
 }
 
 .certificates {
@@ -461,6 +656,12 @@ const openCertificate = (filename: string) => {
   }
   
   .certificate-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .cv-content {
     flex-direction: column;
     align-items: stretch;
     gap: 8px;

@@ -167,13 +167,19 @@
       <el-dialog
         v-model="showDeleteConfirm"
         title="Confirm Delete"
-        width="400px"
+        width="500px"
         :close-on-click-modal="false"
       >
         <div class="delete-confirmation">
           <el-icon class="warning-icon"><WarningFilled /></el-icon>
+          <h3>Delete Content Type</h3>
           <p>Are you sure you want to delete the content type "<strong>{{ typeToDelete?.name }}</strong>"?</p>
-          <p class="warning-text">This action cannot be undone.</p>
+          <div class="warning-details">
+            <p class="warning-text">⚠️ This action cannot be undone.</p>
+            <p class="dependency-info">
+              <strong>Note:</strong> The type can only be deleted if it's not being used by any teachers or students.
+            </p>
+          </div>
         </div>
   
         <template #footer>
@@ -194,19 +200,20 @@
   
   <script setup lang="ts">
   import { ref, computed, reactive } from 'vue'
-  import { useContentTypeQueries } from '@/tanstack/queries'
-  import { ElMessage, ElMessageBox } from 'element-plus'
-  import type { FormInstance, FormRules } from 'element-plus'
-  import { 
-    Plus, 
-    Refresh, 
-    Document, 
-    Calendar, 
-    Edit, 
-    Delete, 
-    WarningFilled 
-  } from '@element-plus/icons-vue'
-  import type { ContentType, CreateTypeRequest } from '@/tanstack/types'
+import { useContentTypeQueries } from '@/tanstack/queries'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import type { FormInstance, FormRules } from 'element-plus'
+import { 
+  Plus, 
+  Refresh, 
+  Document, 
+  Calendar, 
+  Edit, 
+  Delete, 
+  WarningFilled 
+} from '@element-plus/icons-vue'
+import type { ContentType, CreateTypeRequest } from '@/tanstack/types'
+import { authApi } from '@/api/auth'
   
   // Reactive data
   const showAddTypeModal = ref(false)
@@ -317,15 +324,24 @@
     try {
       isDeleting.value = true
       
-      // TODO: Implement delete functionality when API is available
-      await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API call
+      // Call the delete API
+      await authApi.deleteType(typeToDelete.value.id)
       
       ElMessage.success('Content type deleted successfully!')
       showDeleteConfirm.value = false
       typeToDelete.value = null
       refreshTypes()
-    } catch (error) {
-      ElMessage.error('Failed to delete content type')
+    } catch (error: any) {
+      console.error('Delete error:', error)
+      
+      // Handle specific error cases
+      if (error?.response?.status === 404) {
+        ElMessage.error('Content type not found')
+      } else if (error?.response?.status === 400) {
+        ElMessage.error(error.response.data.message || 'Cannot delete type - it is being used by teachers or students')
+      } else {
+        ElMessage.error('Failed to delete content type')
+      }
     } finally {
       isDeleting.value = false
     }
@@ -420,6 +436,12 @@
     margin-bottom: 16px;
   }
   
+  .delete-confirmation h3 {
+    margin: 0 0 16px 0;
+    color: #303133;
+    font-size: 1.2rem;
+  }
+  
   .delete-confirmation p {
     margin: 8px 0;
     color: #303133;
@@ -428,6 +450,22 @@
   .warning-text {
     color: #e6a23c;
     font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  .warning-details {
+    margin-top: 16px;
+    padding: 16px;
+    background: #fdf6ec;
+    border-radius: 8px;
+    border: 1px solid #f5dab1;
+  }
+  
+  .dependency-info {
+    color: #606266;
+    font-size: 0.9rem;
+    margin-top: 12px;
+    line-height: 1.4;
   }
   
   /* Table Customization */

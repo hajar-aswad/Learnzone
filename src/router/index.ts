@@ -63,6 +63,15 @@ const router = createRouter({
             title: 'Content Types',
             roles: ['Admin']
           }
+        },
+        {
+          path: 'tags',
+          name: 'Tags',
+          component: () => import('../views/dashboard/TagsView.vue'),
+          meta: {
+            title: 'Tags Management',
+            roles: ['Admin']
+          }
         }
       ]
     },
