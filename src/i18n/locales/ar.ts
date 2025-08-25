@@ -23,7 +23,13 @@ export default {
       logoutSuccess: 'تم تسجيل الخروج بنجاح!',
       invalidCredentials: 'بيانات اعتماد غير صحيحة',
       loginRequired: 'تسجيل الدخول مطلوب',
-      accessDenied: 'تم رفض الوصول'
+      accessDenied: 'تم رفض الوصول',
+      or: 'أو',
+      signInWithGoogle: 'تسجيل الدخول بحساب جوجل',
+      authenticationSuccessful: 'تمت المصادقة بنجاح! 🎉',
+      authenticationFailed: 'فشلت المصادقة ❌',
+      tryAgain: 'حاول مرة أخرى',
+      unknownError: 'حدث خطأ غير معروف'
     },
     common: {
       submit: 'إرسال',

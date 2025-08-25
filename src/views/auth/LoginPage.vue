@@ -66,6 +66,17 @@
             </button>
             <div v-if="errorMessage" class="error-message mt-2">{{ errorMessage }}</div>
           </form>
+          
+          <!-- Divider -->
+          <div class="divider-container">
+            <div class="divider-line"></div>
+            <span class="divider-text">{{ $t('auth.or') }}</span>
+            <div class="divider-line"></div>
+          </div>
+
+          <!-- Google Sign In Button -->
+          <GoogleSigninButton />
+
           <div class="mt-6 text-center">
             <LanguageSwitcher />
         </div>
@@ -83,6 +94,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
   import { useAuthStore } from '@/stores/auth'
   import LanguageSwitcher from '../../components/LanguageSwitcher.vue'
 import LoadingOverlay from '../../components/LoadingOverlay.vue'
+import GoogleSigninButton from '../../components/GoogleSigninButton.vue'
 import { useForm, Field, ErrorMessage } from 'vee-validate'
   import * as yup from 'yup'
 
@@ -487,6 +499,30 @@ const onSubmit = handleSubmit(async (formValues) => {
 .login-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+}
+
+/* Divider Styles */
+.divider-container {
+  display: flex;
+  align-items: center;
+  width: 235px;
+  margin: 1.5rem auto;
+}
+
+.divider-line {
+  flex-grow: 1;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.3);
+  margin: 0 10px;
+}
+
+.divider-text {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 /* Mobile Responsive */

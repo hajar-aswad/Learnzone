@@ -8,6 +8,8 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AdminAuthError: typeof import('./src/components/AdminAuthError.vue')['default']
+    AdminAuthSuccess: typeof import('./src/components/AdminAuthSuccess.vue')['default']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCard: typeof import('element-plus/es')['ElCard']
@@ -22,15 +24,16 @@ declare module 'vue' {
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElIcon: typeof import('element-plus/es')['ElIcon']
     ElInput: typeof import('element-plus/es')['ElInput']
-    ElMenu: typeof import('element-plus/es')['ElMenu']
-    ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
     ElResult: typeof import('element-plus/es')['ElResult']
     ElSkeleton: typeof import('element-plus/es')['ElSkeleton']
-    ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
+    GoogleSigninButton: typeof import('./src/components/GoogleSigninButton.vue')['default']
+    LanguageSwitcher: typeof import('./src/components/LanguageSwitcher.vue')['default']
+    LoadingOverlay: typeof import('./src/components/LoadingOverlay.vue')['default']
+    PortRedirectHandler: typeof import('./src/components/PortRedirectHandler.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

@@ -74,6 +74,18 @@ const router = createRouter({
       meta: { requiresGuest: true }
     },
     {
+      path: '/admin/auth-success',
+      name: 'AdminAuthSuccess',
+      component: () => import('../components/AdminAuthSuccess.vue'),
+      meta: { requiresGuest: true }
+    },
+    {
+      path: '/admin/auth-error',
+      name: 'AdminAuthError',
+      component: () => import('../components/AdminAuthError.vue'),
+      meta: { requiresGuest: true }
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       redirect: { name: 'teacher-requests' }

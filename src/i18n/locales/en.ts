@@ -23,7 +23,13 @@ export default {
       logoutSuccess: 'Logout successful!',
       invalidCredentials: 'Invalid credentials',
       loginRequired: 'Login required',
-      accessDenied: 'Access denied'
+      accessDenied: 'Access denied',
+      or: 'OR',
+      signInWithGoogle: 'Sign in with Google',
+      authenticationSuccessful: 'Authentication Successful! 🎉',
+      authenticationFailed: 'Authentication Failed ❌',
+      tryAgain: 'Try Again',
+      unknownError: 'Unknown error occurred'
     },
     common: {
       submit: 'Submit',

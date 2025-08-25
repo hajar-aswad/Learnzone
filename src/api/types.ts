@@ -4,7 +4,7 @@ import type { ContentType, CreateTypeRequest, CreateTypeResponse } from '@/tanst
 export const typesApi = {
   async getTypes(): Promise<ContentType[]> {
     try {
-      const response = await apiClient.get<ContentType[]>('/api/types')
+      const response = await apiClient.get<ContentType[]>('/types')
       return response.data
     } catch (error) {
       handleApiError(error, 'Failed to fetch content types')
