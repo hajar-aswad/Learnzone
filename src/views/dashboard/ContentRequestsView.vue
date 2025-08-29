@@ -314,7 +314,7 @@
       console.log('Using local video path:', video.path)
       // Convert Windows path to URL format and serve from backend
       const videoFileName = video.path.split('\\').pop() // Get filename from path
-      return `http://localhost:3000/uploads/videos/${videoFileName}`
+      return `https://icep-final-production.up.railway.app/uploads/videos/${videoFileName}`
     }
     
     console.log('No valid video URL found')

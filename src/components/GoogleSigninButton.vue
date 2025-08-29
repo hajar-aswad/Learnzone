@@ -26,7 +26,7 @@ const signInWithGoogle = async () => {
     
     // Get the auth URL from backend
     const redirectUri = 'http://localhost:3001'
-    const authUrl = `http://localhost:3000/admin/auth/google/init?redirect_uri=${encodeURIComponent(redirectUri)}`
+    const authUrl = `https://icep-final-production.up.railway.app/admin/auth/google/init?redirect_uri=${encodeURIComponent(redirectUri)}`
     
     // Fetch the auth URL and redirect
     const response = await fetch(authUrl)
@@ -34,7 +34,7 @@ const signInWithGoogle = async () => {
     
     if (data.authUrl) {
       // Redirect to Google OAuth
-      window.location.href = `http://localhost:3000${data.authUrl}`
+              window.location.href = `https://icep-final-production.up.railway.app${data.authUrl}`
     } else {
       throw new Error('No auth URL received from backend')
     }

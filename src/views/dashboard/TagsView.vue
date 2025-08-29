@@ -15,8 +15,8 @@
           Add New Tag
         </el-button>
         <el-button
-          @click="refreshTags"
-          :loading="isLoading"
+          @click="() => { refreshTags(); refreshContentTypes(); }"
+          :loading="isLoading || contentTypesLoading"
         >
           <el-icon><Refresh /></el-icon>
           Refresh
@@ -130,9 +130,20 @@
              v-model="tagForm.typeId"
              placeholder="Select language type"
              style="width: 100%"
+             :loading="contentTypesLoading"
            >
-             <el-option label="English" :value="1" />
-             <el-option label="Indian" :value="2" />
+             <el-option
+               v-for="type in contentTypes"
+               :key="type.id"
+               :label="type.name"
+               :value="type.id"
+             />
+             <el-option
+               v-if="!contentTypes || contentTypes.length === 0"
+               label="Loading types..."
+               value=""
+               disabled
+             />
            </el-select>
          </el-form-item>
          
@@ -168,8 +179,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, reactive } from 'vue'
-import { useTagsQueries } from '@/tanstack/queries'
+import { ref, computed, reactive, watch } from 'vue'
+import { useTagsQueries, useContentTypeQueries } from '@/tanstack/queries'
 import { ElMessage } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
 import { 
@@ -177,7 +188,7 @@ import {
   Refresh, 
   Edit
 } from '@element-plus/icons-vue'
-import type { Tag, CreateTagRequest } from '@/tanstack/types'
+import type { Tag, CreateTagRequest, ContentType } from '@/tanstack/types'
 import * as tagsApi from '@/api/tags'
 
 // Reactive data
@@ -189,7 +200,7 @@ const tagFormRef = ref<FormInstance>()
 // Form data
 const tagForm = reactive<CreateTagRequest & { id?: number }>({
   name: '',
-  typeId: 1
+  typeId: 1 // Will be updated when contentTypes load
 })
 
 // Form validation rules
@@ -210,24 +221,40 @@ const tagFormRules: FormRules = {
 
 // Query hooks
 const { useTags } = useTagsQueries()
+const { useContentTypes } = useContentTypeQueries()
 
 const tagsQuery = useTags()
+const contentTypesQuery = useContentTypes()
 
 // Computed properties
 const tagsData = computed(() => tagsQuery.data.value)
 const isLoading = computed(() => tagsQuery.isLoading.value)
 const error = computed(() => tagsQuery.error.value?.message)
+const contentTypes = computed(() => contentTypesQuery.data.value)
+const contentTypesLoading = computed(() => contentTypesQuery.isLoading.value)
 const isCreating = ref(false)
+
+// Watch for content types to load and set default typeId
+watch(contentTypes, (newTypes) => {
+  if (newTypes && newTypes.length > 0 && !isEditing.value) {
+    tagForm.typeId = newTypes[0].id
+  }
+}, { immediate: true })
 
 // Get tags organized by type (from backend)
 const groupedTags = computed(() => {
-  if (!tagsData.value?.tagsByType) return {}
+  if (!tagsData.value?.tagsByType || !contentTypes.value) return {}
   
-  const groups = { ...tagsData.value.tagsByType }
+  const groups: { [key: string]: Tag[] } = {}
   
-  // Sort tags within each group by name
-  Object.keys(groups).forEach(typeName => {
-    if (groups[typeName] && Array.isArray(groups[typeName])) {
+  // Convert numeric keys to type names
+  Object.keys(tagsData.value.tagsByType).forEach(typeId => {
+    const type = contentTypes.value.find(t => t.id === parseInt(typeId))
+    const typeName = type ? type.name : `Type ${typeId}`
+    
+    if (tagsData.value.tagsByType[typeId] && Array.isArray(tagsData.value.tagsByType[typeId])) {
+      groups[typeName] = [...tagsData.value.tagsByType[typeId]]
+      // Sort tags within each group by name
       groups[typeName].sort((a, b) => a.name.localeCompare(b.name))
     }
   })
@@ -250,6 +277,10 @@ const refreshTags = () => {
   tagsQuery.refetch()
 }
 
+const refreshContentTypes = () => {
+  contentTypesQuery.refetch()
+}
+
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', {
     year: 'numeric',
@@ -262,7 +293,7 @@ const formatDate = (dateString: string) => {
 
 const resetTagForm = () => {
   tagForm.name = ''
-  tagForm.typeId = 1
+  tagForm.typeId = contentTypes.value?.[0]?.id || 1
   tagForm.id = undefined
   isEditing.value = false
   tagFormRef.value?.resetFields()
@@ -318,14 +349,10 @@ const editTag = (tag: Tag) => {
 
 // Helper function to get type name from type ID
 const getTypeName = (typeId: number): string => {
-  switch (typeId) {
-    case 1:
-      return 'English'
-    case 2:
-      return 'Indian'
-    default:
-      return `Type ${typeId}`
-  }
+  if (!contentTypes.value) return `Type ${typeId}`
+  
+  const type = contentTypes.value.find(t => t.id === typeId)
+  return type ? type.name : `Type ${typeId}`
 }
 
 

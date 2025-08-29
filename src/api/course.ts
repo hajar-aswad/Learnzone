@@ -24,7 +24,7 @@ export const courseApi = {
 
   async disapproveVideo(id: number): Promise<DisapproveVideoResponse> {
     try {
-      const response = await apiClient.post<DisapproveVideoResponse>(`/course-video/dissapprove/${id}`)
+      const response = await apiClient.delete<DisapproveVideoResponse>(`/course-video/disapprove/${id}`)
       return response.data
     } catch (error) {
       handleApiError(error, 'Failed to disapprove video')

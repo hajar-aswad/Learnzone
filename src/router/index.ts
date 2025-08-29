@@ -10,7 +10,7 @@ const HomeView = () => import('../views/dashboard/HomeView.vue')
 const TeacherRequestsView = () => import('../views/dashboard/TeacherRequestsView.vue')
 const TeachersView = () => import('../views/dashboard/TeachersView.vue')
 const StudentsView = () => import('../views/dashboard/StudentsView.vue')
-const SettingsView = () => import('../views/dashboard/SettingsView.vue')
+
 const ContentRequestsView = () => import('../views/dashboard/ContentRequestsView.vue')
 const ContentTypesView = () => import('../views/dashboard/ContentTypeView.vue')
 const TagsView = () => import('../views/dashboard/TagsView.vue')
@@ -57,12 +57,7 @@ const router = createRouter({
           component: StudentsView,
           meta: { requiresAuth: true }
         },
-        {
-          path: 'settings',
-          name: 'settings',
-          component: SettingsView,
-          meta: { requiresAuth: true }
-        },
+
         {
           path: 'content-requests',
           name: 'ContentRequests',

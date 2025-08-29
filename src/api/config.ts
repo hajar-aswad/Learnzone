@@ -12,7 +12,7 @@ export const TOKEN_CONFIG = {
 
 
 export const API_CONFIG = {
-  baseURL: 'http://localhost:3000',
+  baseURL: 'https://icep-final-production.up.railway.app',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

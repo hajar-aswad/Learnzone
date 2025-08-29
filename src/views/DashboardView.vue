@@ -2,7 +2,7 @@
   <div class="dashboard-container">
     <aside class="sidebar" :class="{ 'sidebar-collapsed': isSidebarCollapsed }">
       <div class="sidebar-header">
-        <h2 class="logo">Admin Panel</h2>
+        <h2 v-show="!isSidebarCollapsed" class="logo">Admin Panel</h2>
         <el-button
           type="text"
           @click="toggleSidebar"
@@ -83,7 +83,6 @@ import {
   Document,
   User,
   School,
-  Setting,
   SwitchButton,
   Expand,
   Fold,
@@ -118,11 +117,7 @@ const menuItems = [
     path: '/dashboard/students',
     icon: 'School'
   },
-  {
-    name: 'Settings',
-    path: '/dashboard/settings',
-    icon: 'Setting'
-  },
+
   {
   name: 'Content Requests', 
   path: '/dashboard/content-requests',
@@ -149,13 +144,13 @@ const currentPageTitle = computed(() => {
 
 const userFullName = computed(() => {
   const user = authStore.currentUser
-  if (!user) return 'Unknown User'
+  if (!user) return 'LearnZone'
   return `${user.fName} ${user.lName}`
 })
 
 const userInitials = computed(() => {
   const user = authStore.currentUser
-  if (!user) return 'U'
+  if (!user) return 'LZ'
   return `${user.fName.charAt(0)}${user.lName.charAt(0)}`.toUpperCase()
 })
 

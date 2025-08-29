@@ -411,12 +411,12 @@ const rejectRequest = async () => {
 }
 
 const openCertificate = (filename: string) => {
-  const url = `http://localhost:3000/uploads/teacher/${filename}`
+  const url = `https://icep-final-production.up.railway.app/uploads/teacher/${filename}`
   window.open(url, '_blank')
 }
 
 const openCV = (filename: string) => {
-  const url = `http://localhost:3000/uploads/teacher/${filename}`
+  const url = `https://icep-final-production.up.railway.app/uploads/teacher/${filename}`
   window.open(url, '_blank')
 }
 
